@@ -1,0 +1,461 @@
+/**
+ * Description: Create Modal Component
+ * Author: Carlos Blanco
+ * Created: 9/18/2020
+ * Ticket: ET-255
+ */
+//Basic imports
+import React from 'react';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import CommentIcon from '@material-ui/icons/Comment'
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import FileViewer from 'react-file-viewer'
+
+//Material UI
+import { Button, Divider } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+
+//Date format
+import Moment from 'react-moment';
+import CurrencyFormat from 'react-currency-format';
+
+const styles = (theme) => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(1),
+      background: '#0072CE',
+      color: 'white',
+      textAlign: 'center'
+    },
+    closeButton: {
+      position: 'absolute',
+      right: theme.spacing(0),
+      top: theme.spacing(0),
+      color: 'white',
+    } 
+});
+
+const useStyles = makeStyles((theme) => ({
+    button: {
+        padding: "0px 5px",
+        textTransform: "capitalize",
+        marginTop: "5px"
+    },
+    date: {
+        fontWeight: "800",
+        color: "#E60042"
+    },
+    disabled: {
+        color: 'grey',
+        pointerEvents: 'none'
+    },
+    floatRight: {
+        float: 'right',
+    },
+    tableHead: {
+        padding: '10px 5px !important',
+        backgroundColor: '#CCC'
+    },
+    tableCell: {
+        padding: '10px 5px !important',
+        borderBottom: '1px solid #CCC !important'
+    },
+    padding5: {
+        padding: '5px !important'
+    }
+}));
+
+const DialogTitle = withStyles(styles)((props) => {
+    const { children, classes, onClose, ...other } = props;
+    return (
+      <MuiDialogTitle disableTypography className={classes.root} {...other}>
+        <Typography variant="h6">{children}</Typography>
+        {onClose ? (
+          <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </MuiDialogTitle>
+    );
+});
+  
+const DialogContent = withStyles((theme) => ({
+    root: {
+      padding: '30px',
+    },
+}))(MuiDialogContent);
+
+const ModalComponent = ({title, data, type}) => {
+    const classes = useStyles();
+    let ifWarranty =  type==="warranty"?classes.warranty:""
+    let ifWarrantyPaper =  type==="warranty"?classes.warrantyPaper:classes.regularPaper
+    // getModalStyle is not a pure function, we roll the style only on the first render
+    const [open, setOpen] = React.useState(false);
+    
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    //Button variations
+    const buttonWarranty = (
+        <Button variant="text" color="secondary" className={classes.button}>
+            <span className="icon_warranty"><strong>{title}</strong></span>
+        </Button>        
+    ) 
+    const buttonRegular = (
+        <Button variant="outlined" color="secondary" onClick={handleOpen} className={classes.button}>
+            More details
+        </Button>
+    )
+
+    const buttonAttachments = (
+        <Button variant="outlined" color="secondary" onClick={handleOpen} className={classes.button}>
+            More Info
+        </Button>
+    )
+    
+    //vars
+    let describer
+    let description
+    let createdDate
+    let updatedDate
+    let company
+    let firstName
+    let lastName
+    let typeOf
+    let historyNote
+    let phone
+    let imageFile
+    let imageTitle
+    let referenceID
+    let assetID
+    let warrantyPeriod1
+    let warrantyPeriod2
+    let warrantyPeriod3
+    let warrantyPeriod4
+    let warrantyExpiryDate
+    let warrantyStartFromDate
+    let warrantyNte
+    let warrantyStatusId
+    let warranty1typeId
+    let warranty2typeId
+    let warranty3typeId
+    let warranty4typeId
+    let warranty1type
+    let warranty2type
+    let warranty3type
+    let warranty4type
+    let warranty1typeStatus
+    let warranty2typeStatus
+    let warranty3typeStatus
+    let warranty4typeStatus
+    let componentWarranties
+    let assignedUsers
+    let additionalNote
+    let author
+
+    const Empty = ""
+    if(type==="document") {
+        description = data['description']?data['description']:Empty
+        typeOf = data['documentType']?data['documentType']:Empty
+        createdDate = data['createdAt']?data['createdAt']:Empty  
+        updatedDate = data['updatedAt']?data['updatedAt']:Empty  
+        imageFile = data['fileName']?data['fileName']:Empty  
+        imageTitle = data['id']?data['id']:Empty   
+        referenceID = data['referenceId']?data['referenceId']:Empty   
+        createdDate = data['dateCreated']?data['dateCreated']:Empty
+        updatedDate = data['dateUpdated']?data['dateUpdated']:Empty
+        author = data['user']?data['user']:Empty
+    } else if (type==="history") {
+        phone = data['user']?data['user']['phoneNumber']:Empty  
+        historyNote = data['note']?data['note']:Empty
+        updatedDate = data['updatedDate']?data['updatedDate']:Empty
+        company = data['user']?data['companyName']:Empty
+    } else if (type==="warranty") { 
+        assetID = data['warranty']?data['warranty']['assetId']:Empty
+        warrantyPeriod1 = data['warranty']?data['warranty']['warrantyPeriod1']:Empty
+        warrantyPeriod2 = data['warranty']?data['warranty']['warrantyPeriod2']:Empty
+        warrantyPeriod3 = data['warranty']?data['warranty']['warrantyPeriod3']:Empty
+        warrantyPeriod4 = data['warranty']?data['warranty']['warrantyPeriod4']:Empty
+        warrantyExpiryDate = data['warranty']?data['warranty']['warrantyExpiryDate']:Empty
+        warrantyStartFromDate = data['warranty']?data['warranty']['warrantyStartFromDate']:Empty
+        warrantyNte = data['warranty']?data['warranty']['warrantyNte']:Empty
+        warrantyStatusId = data['warranty']?data['warranty']['warrantyStatusId']:Empty
+        warranty1typeId = data['warranty']?(data['warranty']['warranty1']?data['warranty']['warranty1']['warrantyTypeId']:Empty):Empty
+        warranty2typeId = data['warranty']?(data['warranty']['warranty2']?data['warranty']['warranty1']['warrantyTypeId']:Empty):Empty
+        warranty3typeId = data['warranty']?(data['warranty']['warranty3']?data['warranty']['warranty1']['warrantyTypeId']:Empty):Empty
+        warranty4typeId = data['warranty']?(data['warranty']['warranty4']?data['warranty']['warranty1']['warrantyTypeId']:Empty):Empty
+        warranty1type = data['warranty']?(data['warranty']['warranty1']?data['warranty']['warranty1']['warrantyType']:Empty):Empty
+        warranty2type = data['warranty']?(data['warranty']['warranty2']?data['warranty']['warranty2']['warrantyType']:Empty):Empty
+        warranty3type = data['warranty']?(data['warranty']['warranty3']?data['warranty']['warranty3']['warrantyType']:Empty):Empty
+        warranty4type = data['warranty']?(data['warranty']['warranty4']?data['warranty']['warranty4']['warrantyType']:Empty):Empty
+        warranty1typeStatus = data['warranty']?(data['warranty']['warranty1']?data['warranty']['warranty1']['status']:Empty):Empty
+        warranty2typeStatus = data['warranty']?(data['warranty']['warranty2']?data['warranty']['warranty2']['status']:Empty):Empty
+        warranty3typeStatus = data['warranty']?(data['warranty']['warranty3']?data['warranty']['warranty3']['status']:Empty):Empty
+        warranty4typeStatus = data['warranty']?(data['warranty']['warranty4']?data['warranty']['warranty4']['status']:Empty):Empty  
+        componentWarranties =  data['warranty']?data['warranty']['componentWarranties']:Empty             
+    } else if (type==="assignedUsers") {
+        assignedUsers = !!data?data:Empty
+    } else if (type==="additionalNote") {
+        additionalNote = data
+    } else {
+        if (data['wonNote'] || data['wonNote']==="") {
+            describer = "Work Order Note"
+            description = data['wonNote']?data['wonNote']:Empty
+            createdDate = data['createdAt']?data['createdAt']:Empty
+            updatedDate = data['updatedAt']?data['updatedAt']:Empty
+            company = data['user']['companyName']?data['user']['companyName']:Empty
+            firstName = data['user']['firstName']?data['user']['firstName']:Empty
+            lastName = data['user']['lastName']?data['user']['lastName']:Empty
+        } else if (data['pnote'] || data['pnote']==="") {
+            describer = "Proposal Note"
+            description = data['pnote']?data['pnote']:Empty
+            createdDate = data['dateCreated']?data['dateCreated']:Empty
+            updatedDate = data['dateUpdated']?data['dateUpdated']:Empty
+            company = data['user']?data['user']['companyName']:Empty
+            firstName = data['user']?data['user']['firstName']:Empty
+            lastName = data['user']?data['user']['lastName']:Empty       
+        } else if (data['invNote'] || data['invNote']==="") {
+            describer = "Invoice Note"
+            description = data['invNote']?data['invNote']:Empty  
+            createdDate = data['createdAt']?data['createdAt']:Empty  
+            updatedDate = data['updatedAt']?data['updatedAt']:Empty  
+            company = data['user']?data['user']['companyName']:Empty  
+            firstName = data['user']?data['user']['firstName']:Empty   
+            lastName = data['user']?data['user']['lastName']:Empty  
+        }
+    }
+
+    //Notes
+    const bodyNotes = (
+        <Grid className={classes.paper}>
+                <p id="simple-modal-description">
+                    {description}
+                </p>
+                <p><strong>Company: </strong>{company}</p>
+                <p><strong>Name: </strong>{firstName} {lastName}</p>  
+                <p><strong>Created At: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{createdDate}</Moment></span></p>
+                <p><strong>Updated At: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{updatedDate}</Moment></span></p>                              
+        </Grid>
+    )
+    
+    //Attachments
+    const handle = useFullScreenHandle();
+
+    const onError = (e) => {
+        console.log(e)
+    }
+    const extension = fileExtension(imageFile)
+    //STAGE env var to avoid CORS issues
+    typeOf = extension==="jpg" || extension==="png" || extension==="gif" || extension==="bmp" || extension==="jpeg"?'photo':'document'
+    
+    const imageURL = `https://ecotrak-documents-production.s3.us-east-2.amazonaws.com/img/uploads/${typeOf}s/`
+    const bodyAttachments = (
+        <Grid className={classes.paper}>
+            <FullScreen handle={handle}>
+            {!!imageFile&&<FileViewer
+                fileType={imageFile.split('.').pop()}
+                filePath={imageURL+imageFile}
+                onError={onError}/>}
+            </FullScreen> 
+            <Button 
+                onClick={handle.enter}
+                variant="outlined"
+                color="secondary"
+                className={classes.FullScreen}
+            >
+                Fullscreen
+            </Button>
+            <p><strong>Description: </strong>{description}</p>
+            <p><strong>Job Title: </strong>{author?author.jobTitle:''}</p>
+            <p><strong>Name: </strong>{author?author.firstName+' '+author.lastName:''}</p>
+            <p><strong>Company Name: </strong>{author?author.companyName:''}</p>
+            <p><strong>Email: </strong>{author?author.email:''}</p>
+        </Grid>
+    )  
+    
+    //History
+    const bodyHistory = (
+        <Grid className={classes.paper}>
+            <p><strong>Phone: </strong>{phone}</p>
+            <p><strong>Note: </strong>{historyNote}</p>  
+            <p><strong>Company: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{company}</Moment></span></p>
+            <p><strong>Updated At: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{updatedDate}</Moment></span></p>               
+        </Grid>
+    )
+
+    //Warranty
+    //Converting object into array in order to use map()
+    const componentWarrantiesArray = componentWarranties?Object.entries(componentWarranties):[];
+    const bodyWarranty = (
+        <Grid container className={`${classes.paper} ${ifWarrantyPaper}`}>
+            <Grid item xs={12} md={12} lg={6}>
+                <p><strong>Asset ID: </strong>{assetID}</p>
+                <p><strong>Warranty Expiry Date: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{warrantyExpiryDate}</Moment></span></p>     
+                <p><strong>warranty Start from Date: </strong>{warrantyStartFromDate}</p>  
+                <p><strong>Warranty Nte: </strong><CurrencyFormat value={warrantyNte} displayType={'text'} thousandSeparator={true} prefix={'$'} /></p>  
+                <p><strong>Warranty Status Id: </strong>{warrantyStatusId}</p>
+                <Divider />
+                <p><strong>Warranty Period 1: </strong>{warrantyPeriod1}</p>
+                <p><strong>Warranty Type: </strong>{warranty1type}</p>
+                <p><strong>Warranty Type Id: </strong>{warranty1typeId}</p>
+                <p><strong>Warranty Status: </strong>{warranty1typeStatus}</p>
+                <Divider/>
+                <p><strong>Warranty Period 2: </strong>{warrantyPeriod2}</p> 
+                <p><strong>Warranty Type: </strong>{warranty2type}</p>
+                <p><strong>Warranty Type Id: </strong>{warranty2typeId}</p>
+                <p><strong>Warranty Status: </strong>{warranty2typeStatus}</p>                   
+                <Divider/>
+                <p><strong>Warranty Period 3: </strong>{warrantyPeriod3}</p>
+                <p><strong>Warranty Type: </strong>{warranty3type}</p>
+                <p><strong>Warranty Type Id: </strong>{warranty3typeId}</p>
+                <p><strong>Warranty Status: </strong>{warranty3typeStatus}</p>                   
+                <Divider/>
+                <p><strong>Warranty Period 4: </strong>{warrantyPeriod4}</p>
+                <p><strong>Warranty Type: </strong>{warranty4type}</p>
+                <p><strong>Warranty Type Id: </strong>{warranty4typeId}</p>
+                <p><strong>Warranty Status: </strong>{warranty4typeStatus}</p>
+            </Grid>
+            <Grid item xs={12} md={12} lg={6} className={classes.pad}>
+                <h2 id="simple-modal-title">Component Warranties</h2>                   
+                {componentWarrantiesArray.map((item) => {
+                    return (
+                        <Grid key={item[0]}>
+                            <p><strong>Warranty Period: </strong>{item[1]['warrantyPeriodType']}</p> 
+                            <p><strong>Warranty Period Type: </strong>{item[1]['warrantyPeriodType']}</p> 
+                            <p><strong>Component Warranty Id: </strong>{item[1]['componentWarrantyId']}</p> 
+                            <p><strong>Invoice Id: </strong>{item[1]['invoiceId']}</p> 
+                            <p><strong>Asset Id: </strong>{item[1]['assetId']}</p> 
+                            <p><strong>Service Provider Id: </strong>{item[1]['serviceProviderId']}</p> 
+                            <p><strong>Asset Failure TypeId: </strong>{item[1]['assetFailureTypeId']}</p> 
+                            <p><strong>Status: </strong>{item[1]['status']}</p>
+                            <p><strong>Date Created: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{item[1]['dateCreated']}</Moment></span></p> 
+                            <p><strong>Date Updated: </strong><span className={classes.date}><Moment format="MMMM D, YYYY hh:mm a">{item[1]['dateUpdated']}</Moment></span></p>                        
+                            <Divider />                       
+                        </Grid>
+                    )
+                })}
+            </Grid>
+        </Grid>        
+    )
+
+    //Assigned Users
+    const bodyAssignedUsers = (
+        <Grid className={classes.paper}>
+            <TableContainer>
+                <Table size={"large"}>
+                    <TableHead>
+                    <TableRow>
+                        <TableCell className={classes.tableHead}>No</TableCell>
+                        <TableCell className={classes.tableHead}>Asignee Email</TableCell>
+                    </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {!!assignedUsers&&assignedUsers.map((user, i) => {
+                        return(
+                        <TableRow key={i} size={"large"} hover={true}>
+                            <TableCell className={classes.tableCell}>{i+1}</TableCell>
+                            <TableCell className={classes.tableCell}>{user}</TableCell>
+                        </TableRow>
+                        )
+                    })}
+                    </TableBody>
+                </Table>
+            </TableContainer>             
+        </Grid>
+    )
+ 
+    const buttonAssignedUsers = !!assignedUsers&&(
+        <Tooltip title="Assigned To" className={classes.floatRight}>
+            <span>
+                <IconButton 
+                    onClick={handleOpen}
+                    className={classes.padding5}
+                >
+                    <AssignmentIndIcon fontSize="large" color="action" />
+                </IconButton>
+            </span>
+        </Tooltip>
+    )
+
+    const bodyAdditionalNote = (
+        <Grid className={classes.paper}>
+            <p>{additionalNote}</p>              
+        </Grid>
+    ) 
+
+    const buttonAdditionalNote = !!additionalNote&&(
+        <Tooltip title="Additional Note" className={classes.floatRight}>
+            <span>
+                <IconButton 
+                    onClick={handleOpen}
+                    className={classes.padding5}
+                >
+                    <CommentIcon fontSize="large" color="action" />
+                </IconButton>
+            </span>
+        </Tooltip>
+    )
+    //Check for types to assign values to "body" layouts 
+    let header  
+    let button
+    let body
+    if (type==="warranty") {
+        header = "Warranty"
+        body = bodyWarranty
+        button = buttonWarranty
+    } else if (type==="document") {
+        header = description||'Document'
+        body = bodyAttachments
+        button = buttonAttachments
+    } else if (type==="history") {
+        header = "History"
+        body = bodyHistory
+        button = buttonRegular
+    } else if (type==="assignedUsers") {
+        header = "Assignees"
+        body = bodyAssignedUsers
+        button = buttonAssignedUsers
+    } else if (type==="additionalNote") {
+        header = "Additional Note"
+        body = bodyAdditionalNote
+        button = buttonAdditionalNote
+    } else {
+        header = describer
+        body = bodyNotes
+        button = buttonRegular
+    }
+    return (
+    <Grid className={ifWarranty}>
+        {button}
+        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} maxWidth={'xl'}>
+            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+                {header}
+            </DialogTitle>
+            <DialogContent dividers>
+                {body}
+            </DialogContent>
+        </Dialog>
+    </Grid>
+    );
+}
+
+export default React.memo(ModalComponent)
