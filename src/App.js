@@ -41,7 +41,6 @@ const App = () => {
   const IdleTimerComponent = () => {
     const idleTimerRef = useRef(null)
     const handleOnActive = (event) => {
-      //console.log('user is active', event)
       if(idleUpdate !== false){
         onIdle()
       }
