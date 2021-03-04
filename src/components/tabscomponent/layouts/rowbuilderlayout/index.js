@@ -57,7 +57,7 @@ export const Row = ({ index, style, data: { columns, items, classes } }) => {
             let getDateField = column.dateField
             //Attachments Tab
             let getDetailsButton = column.itsButton
-            let getDownloadButton = column.downloadButton
+            let getAuthorButton = column.authorButton
 
             //Check if object value are null and avoid broken loops  
             if(item[getDataKey]){
@@ -75,7 +75,8 @@ export const Row = ({ index, style, data: { columns, items, classes } }) => {
                     align={column.numeric || false ? "right" : "left"}
                     className={clsx(
                         classes.cell,
-                        !column.width && classes.expandingCell
+                        !column.width && classes.expandingCell,
+                        typeOfTab==='document'?classes.documentCell:'',
                     )}
                     style={{
                         flexBasis: column.width || false,
@@ -111,7 +112,7 @@ export const Row = ({ index, style, data: { columns, items, classes } }) => {
                         <RenderSingleItem 
                         typeOfTab={typeOfTab}
                         getDetailsButton={getDetailsButton}
-                        getDownloadButton={getDownloadButton}
+                        getAuthorButton={getAuthorButton}
                         checkItem={checkItem}
                         checkNameField={checkNameField}
                         getExtraKeyLast={getExtraKeyLast}

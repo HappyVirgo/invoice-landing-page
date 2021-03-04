@@ -59,19 +59,22 @@ let columnsAttachments = [
     {
         label: "Date Created",
         dataKey: "dateCreated",
+        typeOfTab: "document",
         dateField: true,
         extraKey: false,
         numeric: false,
     }, 
     {
-        label: "Description",
-        dataKey: "description",
+        label: "Document ID",
+        dataKey: "id",
+        typeOfTab: "document",
         extraKey: false,
         numeric: false,
     },
     {
         label: "Document Type",
         dataKey: "documentType",
+        typeOfTab: "document",
         extraKey: false,
         numeric: false,
     },
@@ -80,7 +83,13 @@ let columnsAttachments = [
         itsButton: true,
         typeOfTab: "document",
         numeric: false,
-    } 
+    },
+    {
+        label: "Author",
+        authorButton: true,
+        typeOfTab: "document",
+        numeric: false,
+    }  
 ];
 
 

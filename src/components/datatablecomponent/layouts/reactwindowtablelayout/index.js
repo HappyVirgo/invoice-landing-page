@@ -1,5 +1,5 @@
 //Basic imports
-import React from "react";
+import React, {useState, useEffect} from "react";
 
 //Windowing imports
 import { FixedSizeList as List } from "react-window";
@@ -76,14 +76,19 @@ const useTableStyles = makeStyles(theme => ({
 const topOfList = React.createRef();
 const span = (<span ref={topOfList} />);
 const scrollToTop = () => {
-    if (topOfList.current) {
+    if (!!topOfList.current) {
       topOfList.current.scrollIntoView({block: 'center'});
     }
 };
 //Generating Table
 export const ReactWindowTable = ({ data, columns, firstLoading }) => {
     const classes = useTableStyles();
+    const [items, setItems] = useState([]);
     const itemData = createItemData(classes, columns, data, span);
+    useEffect(() => {
+        setItems(data);
+        scrollToTop();
+    }, [data])
     return (
         <div className={classes.root}>
         <Table className={classes.table} component="div">

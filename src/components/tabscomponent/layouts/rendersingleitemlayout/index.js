@@ -10,15 +10,16 @@ import React from "react";
 
 //Modal
 import {ModalComponent} from '../../../../components'
+import {HoverCard} from '../../../../components'
 
 //Material UI imports
 import TableCell from "@material-ui/core/TableCell";
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import PersonIcon from '@material-ui/icons/Person';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 
 ///Set render structure for single-item column
-export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getDownloadButton, getNameField, getExtraKeyLast, getExtraKey, getDataKey, checkItem, checkNameField, item, getWorkOrderId}) => {
+export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getAuthorButton, getNameField, getExtraKeyLast, getExtraKey, getDataKey, checkItem, checkNameField, item, getWorkOrderId}) => {
     let firstName
     let lastName
     let data
@@ -28,12 +29,8 @@ export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getDownloadButto
         data = firstName+ " " +lastName
     } else if(getDetailsButton===true) {
         data =  <ModalComponent data={item} type={typeOfTab} />
-    } else if (getDownloadButton===true) {
-        data = <Tooltip title="Download">
-                    <IconButton aria-label="Download" onClick={() => window.open(`https://ecotrak-documents-production.s3.us-east-2.amazonaws.com/img/uploads/${item['documentType']}s/${item['fileName']}`)} >
-                        <CloudDownloadIcon color="secondary" />
-                    </IconButton>
-                </Tooltip>
+    } else if (getAuthorButton===true) {
+        data = <HoverCard type="author" data={item} />
     } else {
         data = getExtraKey!==false?checkItem:item[getDataKey]
     }

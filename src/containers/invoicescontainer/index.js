@@ -290,7 +290,7 @@ class WorkOrdersBuilder extends Component {
         //userId = userData.userdata.user.user_id   
         //Next line it's to develop in local     
         // userId = "14580"
-        userId = "2152"
+        userId = "14580"
         this.setState({ 
             firstLoading: true
         })

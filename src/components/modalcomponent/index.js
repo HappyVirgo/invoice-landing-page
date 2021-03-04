@@ -263,10 +263,6 @@ const ModalComponent = ({title, data, type}) => {
     const onError = (e) => {
         console.log(e)
     }
-    const extension = fileExtension(imageFile)
-    //STAGE env var to avoid CORS issues
-    typeOf = extension==="jpg" || extension==="png" || extension==="gif" || extension==="bmp" || extension==="jpeg"?'photo':'document'
-    
     const imageURL = `https://ecotrak-documents-production.s3.us-east-2.amazonaws.com/img/uploads/${typeOf}s/`
     const bodyAttachments = (
         <Grid className={classes.paper}>
@@ -423,7 +419,7 @@ const ModalComponent = ({title, data, type}) => {
         body = bodyWarranty
         button = buttonWarranty
     } else if (type==="document") {
-        header = description||'Document'
+        header = 'Invoice Attachment'
         body = bodyAttachments
         button = buttonAttachments
     } else if (type==="history") {

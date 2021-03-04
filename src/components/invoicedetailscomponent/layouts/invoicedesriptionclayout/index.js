@@ -8,6 +8,7 @@ import { Typography, Button } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
 import {ModalComponent} from '../../../../components'
+import {HoverCard} from '../../../../components'
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -31,12 +32,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const InvoiceDescription = ({invoiceId, additionalNote, description, assignTo, nullVal}) => {
+export const InvoiceDescription = ({invoiceId, additionalNote, attachments, assignTo, nullVal}) => {
     const classes = useStyles()
     return (
         <Grid item xs={12} className={classes.invoiceDescriptionContainer}>
             <ModalComponent  title={additionalNote} data={additionalNote} type={'additionalNote'} />
             <ModalComponent  title={assignTo} data={assignTo} type={'assignedUsers'} />
+            <HoverCard type="attachments" data={attachments} />
             {/* <Button variant="contained" className={classes.buttonEdit} color="secondary" startIcon={<EditIcon/>}>Edit</Button> */}
             <Typography variant={'h1'} className={`${classes.title} details-title`}>Invoice ID: {invoiceId!==null?invoiceId:nullVal}</Typography>
             {/* <Typography variant={'body1'} className={classes.description}>{description!==null?description:nullVal}</Typography>  */}

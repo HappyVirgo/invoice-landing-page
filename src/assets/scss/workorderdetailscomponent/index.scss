@@ -290,6 +290,45 @@
     mask: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI0LjMuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA1MCA1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTAgNTA7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8Zz4KCQk8cmVjdCB4PSIyMy40NCIgeT0iMTQuNzkiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MSAtMC43MDcxIDAuNzA3MSAwLjcwNzEgLTEwLjA3OTMgMjUuMjUzNSkiIHdpZHRoPSI0IiBoZWlnaHQ9IjIwIi8+Cgk8L2c+Cgk8Zz4KCQk8cmVjdCB4PSIxNS40NCIgeT0iMjIuNzkiIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MSAtMC43MDcxIDAuNzA3MSAwLjcwNzEgLTEwLjA3OTMgMjUuMjUyMykiIHdpZHRoPSIyMCIgaGVpZ2h0PSI0Ii8+Cgk8L2c+CjwvZz4KPGc+Cgk8cGF0aCBkPSJNMjUuNDQsNDQuNzljLTExLjAzLDAtMjAtOC45Ny0yMC0yMHM4Ljk3LTIwLDIwLTIwczIwLDguOTcsMjAsMjBTMzYuNDcsNDQuNzksMjUuNDQsNDQuNzl6IE0yNS40NCw4Ljc5CgkJYy04LjgyLDAtMTYsNy4xOC0xNiwxNnM3LjE4LDE2LDE2LDE2czE2LTcuMTgsMTYtMTZTMzQuMjYsOC43OSwyNS40NCw4Ljc5eiIvPgo8L2c+Cjwvc3ZnPgo=') no-repeat 50% 50%;
 }
 
+.user-card {
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    background-image: linear-gradient(rgb(7, 71, 166) 0%, rgb(7, 71, 166) 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 96px;
+    box-sizing: content-box;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    color: white;
+    .user-card-avatar {
+        display: flex;
+        width: 100px;
+        height: 100px;
+        border: 1px solid white;
+        border-radius: 100px;
+        align-items: center;
+        justify-content: center;
+        span {
+            font-size: 40px;
+            line-height: 48px;
+        }
+    }
+    .user-card-info {
+        display: flex;
+        flex-direction: column;
+        .main-info {
+            margin: 12px 0px 8px;
+        }
+        .aux-info {
+            margin-top: 16px;
+        }
+        span {
+            display: flex;
+        }
+    }
+}
+
 @media only screen and (max-width: 600px) {
     .action-button-grid {
         display: block !important;

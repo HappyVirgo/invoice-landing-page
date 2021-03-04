@@ -203,6 +203,7 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
                     invoiceId={invoiceId}
                     assignTo={assignTo}
                     additionalNote={additionalNote}
+                    attachments={attachments}
                     // description={description}
                     nullVal={nullVal}
                 />
