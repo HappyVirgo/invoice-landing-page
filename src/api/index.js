@@ -52,3 +52,7 @@ export const apiAttachmentsWO = "https://api.ecotrak.com/stagev1/invoice/"
 //Warranty
 export const apiWarranty = "https://api.ecotrak.com/stagev1/workorders/"
 //export const apiWarranty = "http://localhost:3000/workorders/"
+
+//Update Inoivce Status
+export const apiIsAccessible = "https://api.ecotrak.com/stagev1/invoice/"
+export const apiUpdateStatus = "https://api.ecotrak.com/stagev1/invoice/"
