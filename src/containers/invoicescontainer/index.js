@@ -30,6 +30,8 @@ import {
     fetchNotesInvoiceData,
     fetchAttachmentsInvoiceData,
     fetchWarrantyWOData,
+    isAccessible, 
+    updateInvoiceStatus
     // createNoteWOData,
     // updateWOStatus,
     // fetchServiceProviders,
@@ -74,10 +76,26 @@ let newNote
 let newNoteAvailable
 let noteDescription
 
-let workOrderUpdateResponse
+let invoiceUpdateResponse
 let updatedStatus
 let reassignToVal
 let serviceProviders
+let updatedStatusVal
+
+const updatedStatuses = [
+    {
+        requestValue: 'APPROVE',
+        key: 'approve'
+    },
+    {
+        requestValue: 'REJECT',
+        key: 'reject'
+    },
+    {
+        requestValue: 'NOT_FIXED',
+        key: 'notFixed'
+    }
+]
 
 class WorkOrdersBuilder extends Component {
     constructor() {
@@ -96,7 +114,7 @@ class WorkOrdersBuilder extends Component {
             newNote: '',
             newNoteAvailable: false,
             noteDescription: '',
-            workOrderUpdateResponse: '',
+            invoiceUpdateResponse: '',
             updatedStatus: '',
             reassignToVal: 1,
             reassignToAvailable: false,
@@ -201,29 +219,15 @@ class WorkOrdersBuilder extends Component {
     }
 
     handleUpdateStatus = (target) => {
-        if(target === "CANCEL"){
-            updatedStatus = "CANCELLED"
-        } else {
-            updatedStatus = target
-        }
+        updatedStatus = target
         console.log("updatedStatus", updatedStatus)
     }
-    updateWOStatus = (event) => {
+    updateInvoiceStatus = (event) => {
         let target = event.target.parentElement.getAttribute("status")
-        if(target !== 'Reassign' && !!target) {
-            target = target.toUpperCase().replace(' ', '_')
-            this.setState({
-                updatedStatus: target,
-                // loadingDetails: true,
-            }, this.handleUpdateStatus(target))
-        } else {
-            target = target.toUpperCase().replace(' ', '_')
-            this.setState({
-                updatedStatus: target,
-                reassignToAvailable: !this.state.reassignToAvailable,
-                // loadingDetails: true,
-            }, this.handleUpdateStatus(target))
-        }
+        this.setState({
+            updatedStatus: target,
+            // loadingDetails: true,
+        }, this.handleUpdateStatus(target))
     }
     handleDynamicDetails = (target) => {
         dtlsID = target 
@@ -290,7 +294,7 @@ class WorkOrdersBuilder extends Component {
         //userId = userData.userdata.user.user_id   
         //Next line it's to develop in local     
         // userId = "14580"
-        userId = "14580"
+        userId = "5296"
         this.setState({ 
             firstLoading: true
         })
@@ -610,14 +614,31 @@ class WorkOrdersBuilder extends Component {
 
             const prevUpdatedStatus = prevState.updatedStatus
             const currentUpdatedStatus = this.state.updatedStatus
-            if( prevUpdatedStatus !== '' && prevUpdatedStatus !== currentUpdatedStatus) {
-                console.log("USERID", userId)
-                workOrderUpdateResponse = await this.props.updateWOStatus(dtlsID, token, updatedStatus, reassignToVal, userId)
-                if(workOrderUpdateResponse) {
-                    this.setState({
-                        workOrderUpdateResponse: workOrderUpdateResponse,
-                        loadingDetails: true
-                    }, handleChangePrevState)
+            if (prevUpdatedStatus === '' && prevUpdatedStatus !== currentUpdatedStatus) {
+                let isAccessible = await this.props.isAccessible(dtlsID, token, userId)
+                console.log("isAccessible", isAccessible)
+                if (!!isAccessible.data || !isAccessible.data.error) {
+                    updatedStatusVal = updatedStatuses[updatedStatus]
+                    if(isAccessible.data.response[updatedStatusVal.key]) {
+                        invoiceUpdateResponse = await this.props.updateInvoiceStatus(updatedStatusVal.requestValue, dtlsID, token, userId) 
+                        console.log("invoiceUpdateResponse", invoiceUpdateResponse)
+                        if(!!invoiceUpdateResponse.data.response) {
+                            this.setState({
+                                invoiceUpdateResponse: invoiceUpdateResponse.data.response,
+                                loadingDetails: true
+                            }, handleChangePrevState)
+                        } else {
+                            alert(invoiceUpdateResponse || "Server Error Occured");
+                            this.setState({
+                                updatedStatus: ''
+                            });
+                        }
+                    } else {
+                        alert(isAccessible.data.error || "Access is denied")
+                        this.setState({
+                            updatedStatus: ''
+                        });
+                    }
                 } else {
                     alert("Server Error Occured");
                     this.setState({
@@ -625,6 +646,21 @@ class WorkOrdersBuilder extends Component {
                     });
                 }
             }
+            // if( prevUpdatedStatus !== '' && prevUpdatedStatus !== currentUpdatedStatus) {
+            //     console.log("USERID", userId)
+            //     workOrderUpdateResponse = await this.props.updateWOStatus(dtlsID, token, updatedStatus, reassignToVal, userId)
+            //     if(workOrderUpdateResponse) {
+            //         this.setState({
+            //             workOrderUpdateResponse: workOrderUpdateResponse,
+            //             loadingDetails: true
+            //         }, handleChangePrevState)
+            //     } else {
+            //         alert("Server Error Occured");
+            //         this.setState({
+            //             updatedStatus: ''
+            //         });
+            //     }
+            // }
 
             // console.log("dltsID", this.state.deta)
             //Normalize state to avoid missing data or state changes
@@ -646,7 +682,7 @@ class WorkOrdersBuilder extends Component {
             handleFilterByCategory: this.handleFilterByCategory,
             handleFilterClearAll: this.handleFilterClearAll,
             createNoteWOData: this.createNoteWOData,
-            updateWOStatus: this.updateWOStatus,
+            updateInvoiceStatus: this.updateInvoiceStatus,
             handleNoteInput: this.handleNoteInput,
             handleReassignToSelect: this.handleReassignToSelect,
             reassignToVal: this.state.reassignToVal,
@@ -718,6 +754,8 @@ const mapDispatchToProps = dispatch => ({
     fetchUsersInformation: () => dispatch(fetchUsersInformation(token)),
     fetchDetailsInvoiceData: () => dispatch(fetchDetailsInvoiceData(dtlsID, token, userId)),
     fetchDetailsWOData: () => dispatch(fetchDetailsWOData(woDtlsID, token)),
+    isAccessible: () => dispatch(isAccessible(dtlsID, token, userId)),
+    updateInvoiceStatus: () => dispatch(updateInvoiceStatus(updatedStatusVal.requestValue, dtlsID, token, userId)),
     // updateWOStatus: () => dispatch(updateWOStatus(dtlsID, token, updatedStatus, reassignToVal, userId)),
     // fetchServiceProviders: () => dispatch(fetchServiceProviders(dtlsID, token, userId)),
     fetchAssignedToMeInvoiceData: () => dispatch(fetchAssignedToMeInvoiceData(token, userId)),

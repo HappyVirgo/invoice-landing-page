@@ -184,10 +184,10 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
                     warranty={warranty}
                     nullVal={nullVal}
                 />
-                {/* <MainActions
+                <MainActions
                     serviceProviders={serviceProviders}
                     status={status}
-                /> */}
+                />
             </Grid>
             <LinkActions
                 workOrderId={workOrderNum}

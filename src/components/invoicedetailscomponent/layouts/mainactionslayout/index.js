@@ -4,7 +4,7 @@ import React, {useContext} from 'react';
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-//import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -100,7 +100,7 @@ export const MainActions = ({serviceProviders, status}) => {
     const chageInputNote = noteFunc.handleNoteInput
     let noteDescription = noteFunc.noteDescription
     const error = noteDescription === '' || noteDescription.length > 1000;
-    const updateWOStatus = noteFunc.updateWOStatus
+    const updateInvoiceStatus = noteFunc.updateInvoiceStatus
     const reassignedTo = noteFunc.handleReassignToSelect
     const reassignToVal = noteFunc.reassignToVal
     //console.log('serviceProviders', serviceProviders)
@@ -150,6 +150,9 @@ export const MainActions = ({serviceProviders, status}) => {
     //console.log('reassignToVal', reassignToVal)
     return (
         <Grid item xs={12} md={12} lg={4} className="action-button-grid">
+            <Button className={classes.actionButton} status={0} onClick={updateInvoiceStatus}>Approve</Button>
+            <Button className={classes.actionButton} status={1} onClick={updateInvoiceStatus}>Reject</Button>
+            <Button className={classes.actionButton} status={2} onClick={updateInvoiceStatus}>Not Fix</Button>
             {/* <PopupComponent buttonLabel="ADD NOTE" modalTitle="Add Notes" btn1Classes={`${classes.actionButton} action-button`} btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButtonOutlned} action-button`} btnStartIcon={<AddNote/>} btn2Label="Cancel" btn1Func={addNote} btn1Label="Submit" MuiDialogTitle={classes.MuiDialogTitle} content={addNoteContent} />
             <PopupComponent buttonLabel="Not Fixed" modalTitle="Not Fixed" btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButton} action-button`} btn1Classes={`${classes.actionButton} action-button`} btnStartIcon={<NotFixed/>} btn1Func={updateWOStatus} MuiDialogTitle={classes.MuiDialogTitle} content="Not fixed?" />
             <PopupComponent buttonLabel="Reassign" modalTitle="Reassign" reassignToVal={reassignToVal} btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButtonOutlned} action-button`} btn1Classes={`${classes.actionButton} action-button`} btnStartIcon={<ReAssigned/>}  btn2Label="Cancel" btn1Label="Reassign" btn1Func={updateWOStatus} MuiDialogTitle={classes.MuiDialogTitle} content={reassignContent} /> */}

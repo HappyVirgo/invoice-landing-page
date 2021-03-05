@@ -38,7 +38,6 @@ import {
     fetchDetailsInvoiceData,
 } from './invoicedetailsactions'
 
-
 //Search Component
 import {
     fetchSearchData,
@@ -70,6 +69,12 @@ import {
     oauthFetchToken,
 } from './oauthtokenactions'
 
+//Update Invoice Status
+import {
+    updateInvoiceStatus,
+    isAccessible,
+} from './updateinvoicestatusactions'
+
 export {
     oauthFetchToken,
     fetchUsersInformation, 
@@ -88,5 +93,7 @@ export {
     fetchNotesInvoiceData,
     // createNoteWOData,
     fetchAttachmentsInvoiceData,
-    fetchWarrantyWOData
+    fetchWarrantyWOData,
+    updateInvoiceStatus,
+    isAccessible,
 }
