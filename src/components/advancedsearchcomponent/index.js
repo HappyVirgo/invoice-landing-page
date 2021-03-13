@@ -5,7 +5,7 @@
  * Ticket: ET-237
  */
 //Basic imports
-import React, {useContext, useState} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
@@ -62,7 +62,21 @@ const AdvancedSearchComponent = () => {
     let searchBy = searchFunc.handleSearchBy
     let searchByState = searchFunc.searchByState
     let searchTermState = searchFunc.searchTermState
+    let checkCTA = searchFunc.checkCurretCTA      
+    let filterID = searchFunc.filterCurrentId
     const classes = useStyles();
+    /**
+     * Check if is a server search in order to reset the input between CTAs
+     * 
+     * Author: Carlos Blanco
+     * Date: 3/12/2021
+     * */
+    useEffect(() => {
+        //Filter id => check for server search || within results
+        if(filterID!==1) {
+            setSearchValue("");
+        }
+    }, [checkCTA, filterID]);
     return (
         <div className={`search-form ${searchBox?'rounded':''}`}>
             <FormControl className={`advanced ${searchBox?'opened':''}`}>

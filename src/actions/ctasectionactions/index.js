@@ -32,7 +32,6 @@ export const fetchCTAsData =  async (token, userId) => {
             'Content-Type': 'application/json',
         } 
     }
-    console.log(apiCTA+accessUserId+ctaURL)  
     return dispatch => {
         return fetch(apiCTA+accessUserId+ctaURL, init)
             .then(response => response.json())

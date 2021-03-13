@@ -81,21 +81,7 @@ let updatedStatus
 let reassignToVal
 let serviceProviders
 let updatedStatusVal
-
-const updatedStatuses = [
-    {
-        requestValue: 'APPROVE',
-        key: 'approve'
-    },
-    {
-        requestValue: 'REJECT',
-        key: 'reject'
-    },
-    {
-        requestValue: 'NOT_FIXED',
-        key: 'notFixed'
-    }
-]
+let isAccessibleVal
 
 class WorkOrdersBuilder extends Component {
     constructor() {
@@ -211,7 +197,6 @@ class WorkOrdersBuilder extends Component {
         //console.log('reassignToVal', reassignToVal)
     }
     handleReassignToSelect = (event) => {
-        console.log("id", event.target)
         let value = event.target.value
         this.setState({
             reassignToVal: value
@@ -292,9 +277,9 @@ class WorkOrdersBuilder extends Component {
         token = await this.props.oauthFetchToken()
         //userData = await this.props.fetchUsersInformation()
         //userId = userData.userdata.user.user_id   
-        //Next line it's to develop in local     
+        //Next line it's to develop in local   
         // userId = "14580"
-        userId = "5296"
+        userId = "14580"
         this.setState({ 
             firstLoading: true
         })
@@ -314,6 +299,7 @@ class WorkOrdersBuilder extends Component {
             notesdata = await this.props.fetchNotesInvoiceData(dtlsID, token, userId)
             //serviceProviders = await this.props.fetchServiceProviders(dtlsID, token);
             attachmentsdata = await this.props.fetchAttachmentsInvoiceData(dtlsID, token)
+            isAccessibleVal = await this.props.isAccessible(dtlsID, token, userId)
             //historydata = await this.props.fetchHistoryWOData(dtlsID, token)
             //warrantydata = await this.props.fetchWarrantyWOData(dtlsID, token)           
         }         
@@ -383,6 +369,7 @@ class WorkOrdersBuilder extends Component {
             prevState.filterByCategory !== this.state.filterByCategory ||
             prevState.newNoteAvailable !== this.state.newNoteAvailable ||
             prevState.updatedStatus !== this.state.updatedStatus ||
+            prevState.invoiceUpdateResponse !== this.state.invoiceUpdateResponse ||
             prevState.reassignToAvailable !== this.state.reassignToAvailable
         ) {
             this.setState({loading: true})
@@ -453,6 +440,9 @@ class WorkOrdersBuilder extends Component {
         })
         */
         if(prevState.detailsId.toString() === this.state.detailsId.toString()) {
+            if(prevState.invoiceUpdateResponse !== this.state.invoiceUpdateResponse) {
+                ctadata = await this.props.fetchCTAsData()
+            }
             switch (currentState) {
                 /**
                  * All "term" arrays elements should be modified in order
@@ -565,6 +555,7 @@ class WorkOrdersBuilder extends Component {
                     attachmentsdata = await this.props.fetchAttachmentsInvoiceData(dtlsID, token)
                     detailsdata = await this.props.fetchDetailsInvoiceData(dtlsID, token, userId)
                     woDtlsID = detailsdata.data.invoice['workOrderId']
+                    isAccessibleVal = await this.props.isAccessible(dtlsID, token, userId)
                     wodetailsdata = await this.props.fetchDetailsWOData(woDtlsID, token)
                     //serviceProviders = await this.props.fetchServiceProviders(dtlsID, token);
                     //historydata = await this.props.fetchHistoryWOData(dtlsID, token)
@@ -602,46 +593,30 @@ class WorkOrdersBuilder extends Component {
                 }, handleChangePrevState)
             }
             
-            const prevNoteStatus = prevState.newNoteAvailable
-            const currentNoteStatus = this.state.newNoteAvailable
-            if( prevNoteStatus !== '' && prevNoteStatus !== currentNoteStatus) {
-                newNote = await this.props.createNoteWOData(noteDescription, dtlsID, token, userId)
-                this.setState({
-                    newNote: newNote.data,
-                    loadingDetails: true
-                }, handleChangePrevState)
-            }
+            // const prevNoteStatus = prevState.newNoteAvailable
+            // const currentNoteStatus = this.state.newNoteAvailable
+            // if( prevNoteStatus !== '' && prevNoteStatus !== currentNoteStatus) {
+            //     newNote = await this.props.createNoteWOData(noteDescription, dtlsID, token, userId)
+            //     this.setState({
+            //         newNote: newNote.data,
+            //         loadingDetails: true
+            //     }, handleChangePrevState)
+            // }
 
             const prevUpdatedStatus = prevState.updatedStatus
             const currentUpdatedStatus = this.state.updatedStatus
             if (prevUpdatedStatus === '' && prevUpdatedStatus !== currentUpdatedStatus) {
-                let isAccessible = await this.props.isAccessible(dtlsID, token, userId)
-                console.log("isAccessible", isAccessible)
-                if (!!isAccessible.data || !isAccessible.data.error) {
-                    updatedStatusVal = updatedStatuses[updatedStatus]
-                    if(isAccessible.data.response[updatedStatusVal.key]) {
-                        invoiceUpdateResponse = await this.props.updateInvoiceStatus(updatedStatusVal.requestValue, dtlsID, token, userId) 
-                        console.log("invoiceUpdateResponse", invoiceUpdateResponse)
-                        if(!!invoiceUpdateResponse.data.response) {
-                            this.setState({
-                                invoiceUpdateResponse: invoiceUpdateResponse.data.response,
-                                loadingDetails: true
-                            }, handleChangePrevState)
-                        } else {
-                            alert(invoiceUpdateResponse || "Server Error Occured");
-                            this.setState({
-                                updatedStatus: ''
-                            });
-                        }
-                    } else {
-                        alert(isAccessible.data.error || "Access is denied")
-                        this.setState({
-                            updatedStatus: ''
-                        });
-                    }
-                } else {
-                    alert("Server Error Occured");
+                invoiceUpdateResponse = await this.props.updateInvoiceStatus(updatedStatus, dtlsID, token, userId, noteDescription) 
+                if(!!invoiceUpdateResponse.data) {
                     this.setState({
+                        invoiceUpdateResponse: invoiceUpdateResponse.data.response,
+                        loadingDetails: true,
+                        noteDescription: '',
+                    }, handleChangePrevState)
+                } else {
+                    alert(invoiceUpdateResponse || "Server Error Occured");
+                    this.setState({
+                        noteDescription: '',
                         updatedStatus: ''
                     });
                 }
@@ -685,6 +660,8 @@ class WorkOrdersBuilder extends Component {
             updateInvoiceStatus: this.updateInvoiceStatus,
             handleNoteInput: this.handleNoteInput,
             handleReassignToSelect: this.handleReassignToSelect,
+            checkCurretCTA: this.state.targetId,
+            filterCurrentId: this.state.searchBy,            
             reassignToVal: this.state.reassignToVal,
             currentDtlsId: this.state.detailsId,
             noteDescription: this.state.noteDescription,
@@ -730,6 +707,7 @@ class WorkOrdersBuilder extends Component {
                                 firstLoading={this.state.firstLoading}
                                 currentDtlsId={this.state.detailsId}
                                 warranty={warrantydata}
+                                isAccessibleVal={isAccessibleVal}
                             />
                         </Grid>  
                     </Grid>  
@@ -755,7 +733,7 @@ const mapDispatchToProps = dispatch => ({
     fetchDetailsInvoiceData: () => dispatch(fetchDetailsInvoiceData(dtlsID, token, userId)),
     fetchDetailsWOData: () => dispatch(fetchDetailsWOData(woDtlsID, token)),
     isAccessible: () => dispatch(isAccessible(dtlsID, token, userId)),
-    updateInvoiceStatus: () => dispatch(updateInvoiceStatus(updatedStatusVal.requestValue, dtlsID, token, userId)),
+    updateInvoiceStatus: () => dispatch(updateInvoiceStatus(updatedStatus, dtlsID, token, userId, noteDescription)),
     // updateWOStatus: () => dispatch(updateWOStatus(dtlsID, token, updatedStatus, reassignToVal, userId)),
     // fetchServiceProviders: () => dispatch(fetchServiceProviders(dtlsID, token, userId)),
     fetchAssignedToMeInvoiceData: () => dispatch(fetchAssignedToMeInvoiceData(token, userId)),

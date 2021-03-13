@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'flex-start'
     }
 }));
-export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments, notes, warranty, serviceProviders}) => {   
+export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments, notes, warranty, serviceProviders, isAccessibleVal}) => {   
     const classes = useStyles()
     //In null case
     const nullVal = null;    
@@ -63,6 +63,7 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
     let categoryType
     let nte
     let raisedNte
+    let approvalHistory
     //Border Section
     let currentEta
     let workOrderNum
@@ -75,6 +76,7 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
     let serviceProviderLast
     let serviceProviderPhoneNumber
     let assignTo
+    let storeNumber
     //Location Section
     let locationAddress
     let location
@@ -135,7 +137,8 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
             categoryType = detailsdata.data.invoice.categoryTypeText!==nullVal?detailsdata.data.invoice.categoryTypeText:nullVal;
             nte = wodetailsdata.data.work_order.nte!==nullVal?wodetailsdata.data.work_order.nte:nullVal;
             raisedNte = wodetailsdata.data.work_order.nte!==nullVal?wodetailsdata.data.work_order.raisedNte:nullVal;
-            assignTo = detailsdata.data.invoice.assignedUserList!==nullVal?detailsdata.data.invoice.assignedUserList:nullVal;   
+            assignTo = detailsdata.data.invoice.assignedUserList!==nullVal?detailsdata.data.invoice.assignedUserList:nullVal;
+            approvalHistory = detailsdata.data.invoice.approvalHistory!==nullVal?detailsdata.data.invoice.approvalHistory:nullVal;
             //Bordered Section 
             // invoicetatus = detailsdata.data.invoice.invoice.length!==0?detailsdata.data.invoice.invoice.reduce((acc, crr, idx)=> acc+(idx===0?'':', ')+crr.invoicetatusDesc.description, ''):nullVal;
             // invoiceId = detailsdata.data.invoice.invoice.length!==0?detailsdata.data.invoice.invoice[0].invoiceId:nullVal;
@@ -156,8 +159,7 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
             locationAddress = wodetailsdata.data.work_order.location!==nullVal?wodetailsdata.data.work_order.location.address1:nullVal;
             location = wodetailsdata.data.work_order.location!==nullVal?wodetailsdata.data.work_order.location.name:nullVal;
             locationPhone = wodetailsdata.data.work_order.location!==nullVal?wodetailsdata.data.work_order.location.phone1:nullVal;
-            
-            
+            storeNumber = detailsdata.data.invoice.asset!==nullVal?(detailsdata.data.invoice.asset.location!==nullVal?detailsdata.data.invoice.asset.location.store_number:nullVal):nullVal;
         }
 } else {
     isAvailable = true
@@ -182,11 +184,13 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
                     assetLocation={assetLocation}
                     warrantyLabel={warrantyLabel}
                     warranty={warranty}
+                    storeNumber={storeNumber}
                     nullVal={nullVal}
                 />
                 <MainActions
                     serviceProviders={serviceProviders}
                     status={status}
+                    isAccessibleVal={isAccessibleVal}
                 />
             </Grid>
             <LinkActions
@@ -218,6 +222,7 @@ export const RenderNotNull = ({detailsdata, wodetailsdata, history, attachments,
                     problemType={problemType}
                     categoryType={categoryType}
                     // woType={woType}
+                    approvalHistory={approvalHistory}                    
                     nte={nte}
                     raisedNte={raisedNte}
                     nullVal={nullVal}

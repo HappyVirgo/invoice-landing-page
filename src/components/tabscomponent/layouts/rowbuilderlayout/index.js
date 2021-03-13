@@ -57,7 +57,6 @@ export const Row = ({ index, style, data: { columns, items, classes } }) => {
             let getDateField = column.dateField
             //Attachments Tab
             let getDetailsButton = column.itsButton
-            let getAuthorButton = column.authorButton
 
             //Check if object value are null and avoid broken loops  
             if(item[getDataKey]){
@@ -112,7 +111,6 @@ export const Row = ({ index, style, data: { columns, items, classes } }) => {
                         <RenderSingleItem 
                         typeOfTab={typeOfTab}
                         getDetailsButton={getDetailsButton}
-                        getAuthorButton={getAuthorButton}
                         checkItem={checkItem}
                         checkNameField={checkNameField}
                         getExtraKeyLast={getExtraKeyLast}

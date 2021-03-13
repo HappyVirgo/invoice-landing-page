@@ -20,7 +20,20 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const MainDetails = ({assetName, assetLocation, workOrderId, woType, manufacturer, model, serial, assetType, warrantyLabel, warranty, nullVal}) => {
+export const MainDetails = ({
+    assetName, 
+    assetLocation, 
+    workOrderId, 
+    woType, 
+    manufacturer, 
+    model, 
+    serial, 
+    assetType, 
+    warrantyLabel, 
+    warranty, 
+    storeNumber,
+    nullVal
+}) => {
     const classes = useStyles()
     let warrantyBadge
     let warrantyText
@@ -37,6 +50,7 @@ export const MainDetails = ({assetName, assetLocation, workOrderId, woType, manu
     return (
         <Grid item xs={6} md={7} lg={6} className="main_details">
             <Typography variant="h1" className={classes.Typography}>{assetName!==undefined?(assetName!==null?assetName:workOrderId):workOrderId} <br/><small>{woType!==null?woType:nullVal}</small></Typography>
+            <Typography >Store #: {storeNumber!==null?storeNumber:nullVal}</Typography>
             <Typography >Asset Location: {assetLocation!==null?assetLocation:nullVal}</Typography>
             <Typography >Manufacturer: {manufacturer!==null?manufacturer:nullVal}</Typography>
             <Typography>Model #: {model!==null?model:nullVal}</Typography>

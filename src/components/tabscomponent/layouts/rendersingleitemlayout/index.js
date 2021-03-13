@@ -10,16 +10,15 @@ import React from "react";
 
 //Modal
 import {ModalComponent} from '../../../../components'
-import {HoverCard} from '../../../../components'
 
 //Material UI imports
 import TableCell from "@material-ui/core/TableCell";
-import PersonIcon from '@material-ui/icons/Person';
-import Tooltip from '@material-ui/core/Tooltip';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 ///Set render structure for single-item column
-export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getAuthorButton, getNameField, getExtraKeyLast, getExtraKey, getDataKey, checkItem, checkNameField, item, getWorkOrderId}) => {
+export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getNameField, getExtraKeyLast, getExtraKey, getDataKey, checkItem, checkNameField, item, getWorkOrderId}) => {
     let firstName
     let lastName
     let data
@@ -28,15 +27,20 @@ export const RenderSingleItem = ({ typeOfTab, getDetailsButton, getAuthorButton,
         lastName = getExtraKeyLast!==false?checkNameField:item[getDataKey]
         data = firstName+ " " +lastName
     } else if(getDetailsButton===true) {
-        data =  <ModalComponent data={item} type={typeOfTab} />
-    } else if (getAuthorButton===true) {
-        data = <HoverCard type="author" data={item} />
+        data =  <>
+                    <ModalComponent data={item} type={typeOfTab} />
+                    <Tooltip title="Download">
+                        <IconButton className="padding5" aria-label="Download" onClick={() => window.open(`https://ecotrak-documents-production.s3.us-east-2.amazonaws.com/img/uploads/${item['documentType']}s/${item['fileName']}`)} >
+                            <CloudDownloadIcon color="secondary" />
+                        </IconButton>
+                    </Tooltip>
+                </>
     } else {
         data = getExtraKey!==false?checkItem:item[getDataKey]
     }
     
     return (
-        <TableCell id={getWorkOrderId} component="div">
+        <TableCell id={getWorkOrderId} component="div" style={{display:`${getDetailsButton?'flex':''}`}}>
                 {data}
         </TableCell>
     );

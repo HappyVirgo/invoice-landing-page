@@ -48,7 +48,6 @@ export const updateWOStatus = async (dtlsID, token, updatedStatus, reassignToVal
         return id
     }     
     let accessUserId = await accessFetchUserId(userId)    
-    console.log(accessUserId)
     if(reassignToVal === undefined) {
         data = {
             status: updatedStatus,

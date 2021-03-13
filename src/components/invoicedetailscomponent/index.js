@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const InvoiceDetailsComponent = ({detailsdata, tmpDataAmount, wodetailsdata, history, attachments, notes, warranty, serviceProviders, loadingDetails, firstLoading, currentDtlsId}) => {
+const InvoiceDetailsComponent = ({detailsdata, tmpDataAmount, wodetailsdata, history, attachments, notes, warranty, serviceProviders, loadingDetails, firstLoading, currentDtlsId, isAccessibleVal}) => {
     const classes = useStyles()
     return (
         <>
@@ -61,6 +61,7 @@ const InvoiceDetailsComponent = ({detailsdata, tmpDataAmount, wodetailsdata, his
                         notes={notes}
                         warranty={warranty}
                         serviceProviders={serviceProviders}
+                        isAccessibleVal={isAccessibleVal}
                     />
                 </Paper>
                 )}

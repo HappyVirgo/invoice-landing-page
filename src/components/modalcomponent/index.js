@@ -10,6 +10,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
+import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import CommentIcon from '@material-ui/icons/Comment'
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
@@ -54,6 +55,14 @@ const useStyles = makeStyles((theme) => ({
         padding: "0px 5px",
         textTransform: "capitalize",
         marginTop: "5px"
+    },
+    approvalButton: {
+        borderRadius: '25px',
+        backgroundColor: '#0072CE ',
+        '&:hover': {
+            backgroundColor: '#424041',
+        },
+        marginTop: '25px'
     },
     date: {
         fontWeight: "800",
@@ -127,9 +136,11 @@ const ModalComponent = ({title, data, type}) => {
     )
 
     const buttonAttachments = (
-        <Button variant="outlined" color="secondary" onClick={handleOpen} className={classes.button}>
-            More Info
-        </Button>
+        <Tooltip title="Details">
+            <IconButton aria-label="More Info" onClick={handleOpen} className={classes.padding5} >
+                <OpenInBrowserIcon color="secondary" />
+            </IconButton>
+        </Tooltip>
     )
     
     //vars
@@ -171,6 +182,7 @@ const ModalComponent = ({title, data, type}) => {
     let assignedUsers
     let additionalNote
     let author
+    let approvalHistory
 
     const Empty = ""
     if(type==="document") {
@@ -216,6 +228,12 @@ const ModalComponent = ({title, data, type}) => {
         assignedUsers = !!data?data:Empty
     } else if (type==="additionalNote") {
         additionalNote = data
+    } else if (type==="approvalHistory") {
+        approvalHistory = data.sort((a, b) => {
+            if(a.currentAssign < b.currentAssign) { return -1; }
+            if(a.currentAssign > b.currentAssign) { return 1; }
+            return 0;
+        })
     } else {
         if (data['wonNote'] || data['wonNote']==="") {
             describer = "Work Order Note"
@@ -410,6 +428,36 @@ const ModalComponent = ({title, data, type}) => {
             </span>
         </Tooltip>
     )
+
+    const buttonApprovalHistory = !!approvalHistory&&(
+        <Button variant="contained" color="primary" onClick={handleOpen} className={classes.approvalButton}>
+            Approval History
+        </Button>
+    )
+    const bodyApprovalHistory = !!approvalHistory&&(
+        <Table size={"large"}>
+            <TableHead>
+            <TableRow>
+                <TableCell className={classes.tableHead}>Approval Date</TableCell>
+                <TableCell className={classes.tableHead}>Approver Name</TableCell>
+                <TableCell className={classes.tableHead}>Job Title</TableCell>                        
+                <TableCell className={classes.tableHead}>Assignee</TableCell>
+                <TableCell className={classes.tableHead}>Approver Notes</TableCell>
+            </TableRow>
+            </TableHead>
+            <TableBody>
+            {approvalHistory.map((history) => (
+                <TableRow key={history.id} size={"large"} hover={true}>
+                <TableCell className={classes.tableCell}>{!!history.approvalDate&&<Moment format="MM/D/YY">{history.approvalDate}</Moment>}</TableCell>
+                <TableCell className={classes.tableCell}>{history.user.firstName +" "+ history.user.lastName}</TableCell>
+                <TableCell className={classes.tableCell}>{history.user.jobTitle}</TableCell>              
+                <TableCell className={classes.tableCell}>{history.currentAssign}</TableCell>
+                <TableCell className={classes.tableCell}>{history.approvalStatus}</TableCell>
+                </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+    )
     //Check for types to assign values to "body" layouts 
     let header  
     let button
@@ -434,6 +482,10 @@ const ModalComponent = ({title, data, type}) => {
         header = "Additional Note"
         body = bodyAdditionalNote
         button = buttonAdditionalNote
+    } else if (type==="approvalHistory") {
+        header = "Approval History"
+        body = bodyApprovalHistory
+        button = buttonApprovalHistory
     } else {
         header = describer
         body = bodyNotes
