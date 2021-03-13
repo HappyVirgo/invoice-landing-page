@@ -1,5 +1,5 @@
 //Basic imports
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Select, MenuItem } from '@material-ui/core'
 
+import {PopupComponent} from '../../../../components'
 import { GlobalContext } from "../../../../context/globalcontext";
 //Icons
 import {
@@ -93,21 +94,37 @@ const useStyles = makeStyles((theme) => ({
 //     "General Parts Corporate Dispatch",
 //     "Reddi Industries"
 // ]
-
-export const MainActions = ({serviceProviders, status}) => {
+const updatedStatuses = [
+    {
+        requestValue: 'APPROVE',
+        key: 'approve'
+    },
+    {
+        requestValue: 'REJECT',
+        key: 'reject'
+    },
+    {
+        requestValue: 'NOT_FIX',
+        key: 'notFixed'
+    }
+]
+export const MainActions = ({serviceProviders, status, isAccessibleVal={data: {response: {}}}}) => {
+    const [error, setError] = useState(false);
     const noteFunc = useContext(GlobalContext)
     const addNote = noteFunc.createNoteWOData
     const chageInputNote = noteFunc.handleNoteInput
     let noteDescription = noteFunc.noteDescription
-    const error = noteDescription === '' || noteDescription.length > 1000;
+    useEffect(() => {
+        setError(noteDescription === '' || noteDescription.length > 1000);
+    })
     const updateInvoiceStatus = noteFunc.updateInvoiceStatus
     const reassignedTo = noteFunc.handleReassignToSelect
     const reassignToVal = noteFunc.reassignToVal
     //console.log('serviceProviders', serviceProviders)
     const classes = useStyles()
-    const addNoteContent = <div>
+    const noteIncludeContent = (changeStatus) => <div>
                                 <FormControl required error={error} component="fieldset" style={{width:'100%'}}>
-                                    <FormLabel className={classes.inputLabel} component="legend">Note(1,000 character max)</FormLabel>
+                                    <FormLabel className={classes.inputLabel} component="legend">Are you sure to set state to '{changeStatus}'? Plz leave your note(1,000 character max)</FormLabel>
                                     <TextField onChange={chageInputNote} fullWidth={true} multiline={true} variant="outlined" InputProps={{ classes: { input: classes.textField } }}/>
                                 </FormControl>
                                 <FormControl required>
@@ -147,12 +164,11 @@ export const MainActions = ({serviceProviders, status}) => {
                             </Select>
                         </FormControl>
                     </div>
-    //console.log('reassignToVal', reassignToVal)
     return (
         <Grid item xs={12} md={12} lg={4} className="action-button-grid">
-            <Button className={classes.actionButton} status={0} onClick={updateInvoiceStatus}>Approve</Button>
-            <Button className={classes.actionButton} status={1} onClick={updateInvoiceStatus}>Reject</Button>
-            <Button className={classes.actionButton} status={2} onClick={updateInvoiceStatus}>Not Fix</Button>
+            <PopupComponent btnClasses={`${classes.actionButton} ${!!isAccessibleVal.data?((!isAccessibleVal.data.response[updatedStatuses[0].key]||(status !== ("Pending Approval" || "Approval in Process")))&&classes.disabled):classes.disabled}`} btn1Classes={`${classes.actionButton} action-button`} btn2Classes={`${classes.actionButtonOutlned} action-button`} status={updatedStatuses[0].requestValue} buttonLabel="Approve" onSubmit={updateInvoiceStatus} content="Are you sure to set state to 'Approve'?" />
+            <PopupComponent btnClasses={`${classes.actionButton} ${!!isAccessibleVal.data?((!isAccessibleVal.data.response[updatedStatuses[1].key]||(status !== ("Pending Approval" || "Approval in Process")))&&classes.disabled):classes.disabled}`} btn1Classes={`${classes.actionButton} action-button`} btn2Classes={`${classes.actionButtonOutlned} action-button`} status={updatedStatuses[1].requestValue} buttonLabel="Reject" onSubmit={updateInvoiceStatus} content={noteIncludeContent(updatedStatuses[1].requestValue)} />
+            <PopupComponent btnClasses={`${classes.actionButton} ${!!isAccessibleVal.data?((!isAccessibleVal.data.response[updatedStatuses[2].key]||(status !== ("Pending Approval" || "Approval in Process")))&&classes.disabled):classes.disabled}`} btn1Classes={`${classes.actionButton} action-button`} btn2Classes={`${classes.actionButtonOutlned} action-button`} status={updatedStatuses[2].requestValue} buttonLabel="Not Fixed" onSubmit={updateInvoiceStatus} content={noteIncludeContent(updatedStatuses[2].requestValue)} />
             {/* <PopupComponent buttonLabel="ADD NOTE" modalTitle="Add Notes" btn1Classes={`${classes.actionButton} action-button`} btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButtonOutlned} action-button`} btnStartIcon={<AddNote/>} btn2Label="Cancel" btn1Func={addNote} btn1Label="Submit" MuiDialogTitle={classes.MuiDialogTitle} content={addNoteContent} />
             <PopupComponent buttonLabel="Not Fixed" modalTitle="Not Fixed" btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButton} action-button`} btn1Classes={`${classes.actionButton} action-button`} btnStartIcon={<NotFixed/>} btn1Func={updateWOStatus} MuiDialogTitle={classes.MuiDialogTitle} content="Not fixed?" />
             <PopupComponent buttonLabel="Reassign" modalTitle="Reassign" reassignToVal={reassignToVal} btnClasses={`${classes.actionButton} action-button ${classes.disabled}`} btn2Classes={`${classes.actionButtonOutlned} action-button`} btn1Classes={`${classes.actionButton} action-button`} btnStartIcon={<ReAssigned/>}  btn2Label="Cancel" btn1Label="Reassign" btn1Func={updateWOStatus} MuiDialogTitle={classes.MuiDialogTitle} content={reassignContent} /> */}

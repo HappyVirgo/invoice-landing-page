@@ -1,5 +1,5 @@
 //Basic Imports
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 
 //Material UI
 import { makeStyles } from '@material-ui/core/styles';
@@ -45,6 +45,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const CTASectionLayout = ({assignedToMeInvoices, awaitingInvoices, pendingInvoices, unassignedInvoices}) => {
+    const [amInvoice, setAmInvoice] = useState(assignedToMeInvoices)
+    const [awInvoice, setAwInvoice] = useState(awaitingInvoices)
+    const [pdInvoice, setPdInvoice] = useState(pendingInvoices)
+
+    useEffect(() => {
+        setAmInvoice(assignedToMeInvoices)
+        setAwInvoice(awaitingInvoices)
+        setPdInvoice(pendingInvoices)
+    }, [assignedToMeInvoices, awaitingInvoices, pendingInvoices])
+
     let change = useContext(GlobalContext)
     change = change.dynamicData
     //Loading custom styles Material UI
@@ -52,15 +62,15 @@ export const CTASectionLayout = ({assignedToMeInvoices, awaitingInvoices, pendin
     return(
         <Grid item xs={8} md={8} lg={8} className="common-cta-wo">
             <Grid item xs={4} md={4} lg={4} className="assign-to-me-invoice" id="assignedInvoice" onClick={change}>
-                <Typography className={classes.cta_assigned_value} variant="h2">{assignedToMeInvoices}</Typography>
+                <Typography className={classes.cta_assigned_value} variant="h2">{amInvoice}</Typography>
                 <Typography className={classes.cta_description_text} variant="body1">Assigned to me</Typography>
             </Grid>
             <Grid item xs={4} md={4} lg={4} className="awaiting-invoice" id="awaitingInvoice" onClick={change}>
-                <Typography className={classes.cta_awaiting_value} variant="h2">{awaitingInvoices}</Typography>
+                <Typography className={classes.cta_awaiting_value} variant="h2">{awInvoice}</Typography>
                 <Typography className={classes.cta_description_text} variant="body1">Awaiting Invoice</Typography>
             </Grid>
             <Grid item xs={4} md={4} lg={4} className="pending-approval-invoice" id="pendingInvoice" onClick={change}>
-                <Typography className={classes.cta_pending_value} variant="h2">{pendingInvoices}</Typography>
+                <Typography className={classes.cta_pending_value} variant="h2">{pdInvoice}</Typography>
                 <Typography className={classes.cta_description_text} variant="body1">Pending Approval</Typography>
             </Grid>
             {/* <Grid item xs={3} md={3} lg={3} className="unassigned-invoice" id="unassignedInvoice" onClick={change}>

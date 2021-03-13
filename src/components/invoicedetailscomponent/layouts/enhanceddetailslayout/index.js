@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const EnhancedDetails = ({status, assignTo, invoiceDate, invoiceSerialNo, total, tradeType, problemType, categoryType, nte, raisedNte, nullVal}) => {
+export const EnhancedDetails = ({status, assignTo, invoiceDate, invoiceSerialNo, total, tradeType, approvalHistory, problemType, categoryType, nte, raisedNte, nullVal}) => {
     const classes = useStyles()
     let statusDisplay
     // let priorityDisplay
@@ -226,7 +226,8 @@ export const EnhancedDetails = ({status, assignTo, invoiceDate, invoiceSerialNo,
                 <Grid item xs={descSize}>
                     <Typography variant={'body1'} className={classes.text}><CurrencyFormat value={raisedNte} displayType={'text'} thousandSeparator={true} prefix={'$'} /></Typography>
                 </Grid>                
-            </Grid>                                                                      
+            </Grid>
+            <ModalComponent data={approvalHistory} type="approvalHistory" />                                                                   
         </Grid>
     )
 }

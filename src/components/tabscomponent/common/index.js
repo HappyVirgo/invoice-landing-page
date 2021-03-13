@@ -79,17 +79,11 @@ let columnsAttachments = [
         numeric: false,
     },
     {
-        label: "Details",
+        label: "",
         itsButton: true,
         typeOfTab: "document",
         numeric: false,
     },
-    {
-        label: "Author",
-        authorButton: true,
-        typeOfTab: "document",
-        numeric: false,
-    }  
 ];
 
 

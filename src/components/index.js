@@ -19,6 +19,7 @@ import TabsComponent from './tabscomponent'
 
 //Modal Component
 import ModalComponent from './modalcomponent'
+import PopupComponent from './popupcomponent'
 import HoverCard from './hovercardcomponent'
 
 //Search Component
@@ -38,6 +39,7 @@ export {
     ModalComponent,
     AdvancedSearchComponent,
     FilteringComponent,
+    PopupComponent,
     Alert,
     HoverCard,
 }
